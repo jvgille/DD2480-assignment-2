@@ -26,7 +26,10 @@ dependencies {
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
+
+    // https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server
+    compile group: 'org.eclipse.jetty', name: 'jetty-server', version: '9.4.14.v20181114'
 }
 
 // Define the main class for the application
-mainClassName = 'group22.App'
+mainClassName = 'group22.ContinuousIntegrationServer'
