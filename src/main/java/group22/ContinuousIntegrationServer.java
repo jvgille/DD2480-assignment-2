@@ -40,5 +40,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         server.setHandler(new ContinuousIntegrationServer());
         server.start();
         server.join();
+
+        //TODO get the branch as a string
+        GitHandler.cloneRepo("master");
+
     }
 }
