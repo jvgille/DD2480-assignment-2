@@ -6,7 +6,7 @@ Guidelines for commits:
   
   examples:
   X = issue number
-  Y = fix, update, add.
+  Y = fix, update, add etc. (optional)
   text = your personal comments on the fix or update
 
 Naming methods:
