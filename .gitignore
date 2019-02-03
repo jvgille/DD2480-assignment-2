@@ -3,3 +3,12 @@
 
 # Ignore Gradle build output directory
 build
+
+# Our data directory
+data
+
+# Eclipse
+.settings
+bin
+.classpath
+.project
