@@ -4,5 +4,11 @@
 # Ignore Gradle build output directory
 build
 
-#ignore the data-folder containing the cloned repo (it will be stored locally on the server)
-data/
+# Our data directory
+data
+
+# Eclipse
+.settings
+bin
+.classpath
+.project
