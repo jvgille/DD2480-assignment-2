@@ -26,8 +26,8 @@ import java.util.stream.Collectors;
  * documentation for API documentation of those classes.
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
-
-    ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
+    private static ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
+    private static volatile boolean shouldStop = false;
 
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -37,14 +37,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         System.out.println(target);
 
-
-        // here you do all the continuous integration tasks
-        // for example
-        // 1st clone your repository
-        // 2nd compile the code (run ./gradlew build)
-        String requestData = request.getReader().lines().collect(Collectors.joining());
-        System.out.println(requestData);
         if (request.getMethod() == "POST") {
+            String requestData = request.getReader().lines().collect(Collectors.joining());
             JSONObject obj = new JSONObject(requestData);
             String ref = obj.getString("ref");
             JSONArray commits = obj.getJSONArray("commits");
@@ -56,22 +50,48 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, commitMessage);
             queue.add(pp);
             System.out.println(pp);
-        }
-
-        if (request.getMethod() == "GET") {
-            String path = "data/";
-            if (target.equals("/")) {
-                path += "index.html";
+        } else if (request.getMethod() == "GET") {
+            if (target.equals("/stop")) {
+                response.getOutputStream().println("Stopping server. Good bye.");
+                shouldStop = true;
             } else {
-                path += "builds" + target;
+                String path = "data/";
+                if (target.equals("/")) {
+                    path += "index.html";
+                } else {
+                    path += "builds" + target;
+                }
+                ServletOutputStream s = response.getOutputStream();
+                try {
+                    byte[] b = Files.readAllBytes(Paths.get(path));
+                    s.write(b);
+                } catch(NoSuchFileException e) {
+                    s.println("404 file not found");
+                }
             }
-            ServletOutputStream s = response.getOutputStream();
-            try {
-                byte[] b = Files.readAllBytes(Paths.get(path));
-                s.write(b);
-            } catch(NoSuchFileException e) {
-                s.println("404 file not found");
+        }
+        response.flushBuffer();
+    }
+
+    private static void handleQueue() {
+        try {
+            while(!shouldStop) {
+                PushPayload p = queue.poll();
+
+                if (p == null) {
+                    Thread.sleep(1000);
+                } else {
+                    System.out.println("cloning repo");
+                    GitHandler.cloneRepo(p);
+                    System.out.println("executing build");
+                    ProjectBuilder.build(p);
+                    System.out.println("storing build");
+                    HistoryLogger.storeBuild(p);
+                    System.out.println("done");
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -80,9 +100,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         Server server = new Server(8022);
         server.setHandler(new ContinuousIntegrationServer());
         server.start();
-        server.join();
 
-        // HistoryLogger.storeBuild("hello this is build result\nit is very nice");
+        handleQueue();
+        server.stop();
     }
 
 }

@@ -7,6 +7,9 @@ public class PushPayload {
     String commitSHA;
     String commitMessage;
 
+    String buildResult;
+    String buildMessage;
+
     public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String commitMessage) {
         this.branch = getBranchName(ref);
         this.pusherName = pusherName;
