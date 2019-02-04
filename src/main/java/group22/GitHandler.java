@@ -14,7 +14,7 @@ import org.apache.commons.io.FileUtils;
 public final class GitHandler{
     private static String path = "data/repo";
     private static String url = "https://github.com/jvgille/DD2480-assignment-2.git";
-
+    
     /*
     * @param branch: the name of the branch that is to be cloned
     * cloneRepo will clone the repository (at a specific branch) and put it in a data-folder
