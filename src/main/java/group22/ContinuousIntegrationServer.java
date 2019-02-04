@@ -43,15 +43,19 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         // 1st clone your repository
         // 2nd compile the code (run ./gradlew build)
         String requestData = request.getReader().lines().collect(Collectors.joining());
+        System.out.println(requestData);
         if (request.getMethod() == "POST") {
             JSONObject obj = new JSONObject(requestData);
-            String branch = obj.getString("ref");
-            String pusherMail = obj.getJSONObject("pusher").getString("email");
-            String pusherName = obj.getJSONObject("pusher").getString("name");
-
-            PushPayload pp = new PushPayload(branch, pusherName, pusherMail);
+            String ref = obj.getString("ref");
+            JSONArray commits = obj.getJSONArray("commits");
+            JSONObject info = commits.getJSONObject(0);
+            String pusherMail = info.getJSONObject("author").getString("email");
+            String pusherName = info.getJSONObject("author").getString("name");
+            String commitSHA = info.getString("id");
+            String commitMessage = info.getString("message");
+            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, commitMessage);
             queue.add(pp);
-            //System.out.println(pp);
+            System.out.println(pp);
         }
 
         if (request.getMethod() == "GET") {
