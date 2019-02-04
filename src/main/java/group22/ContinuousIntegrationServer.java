@@ -3,8 +3,13 @@ package group22;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Paths;
+
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.Request;
@@ -32,6 +37,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         System.out.println(target);
 
+
         // here you do all the continuous integration tasks
         // for example
         // 1st clone your repository
@@ -48,7 +54,21 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             //System.out.println(pp);
         }
 
-        response.getWriter().println("CI job done");
+        if (request.getMethod() == "GET") {
+            String path = "data/";
+            if (target.equals("/")) {
+                path += "index.html";
+            } else {
+                path += "builds" + target;
+            }
+            ServletOutputStream s = response.getOutputStream();
+            try {
+                byte[] b = Files.readAllBytes(Paths.get(path));
+                s.write(b);
+            } catch(NoSuchFileException e) {
+                s.println("404 file not found");
+            }
+        }
     }
 
     // used to start the CI server in command line
@@ -57,6 +77,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         server.setHandler(new ContinuousIntegrationServer());
         server.start();
         server.join();
+
+        // HistoryLogger.storeBuild("hello this is build result\nit is very nice");
     }
 
 }
