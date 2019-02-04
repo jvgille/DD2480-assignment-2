@@ -9,13 +9,15 @@ public class PushPayload {
 
     String buildResult;
     String buildMessage;
+    String date;
 
-    public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String commitMessage) {
+    public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String commitMessage, String date) {
         this.branch = getBranchName(ref);
         this.pusherName = pusherName;
         this.pusherMail = pusherMail;
         this.commitSHA = commitSHA;
         this.commitMessage = commitMessage;
+        this.date = date;
     }
 
     private String getBranchName(String ref) {
@@ -32,6 +34,6 @@ public class PushPayload {
     @Override
     public String toString() {
         StringBuilder b = new StringBuilder();
-        return b.append("branch: " + branch + "\npusher Mail: " + pusherMail + "\npusher Name: " + pusherName + "\ncommit SHA: " + commitSHA + "\ncommit message: " + commitMessage).toString();
+        return b.append("branch: " + branch + "\npusher Mail: " + pusherMail + "\npusher Name: " + pusherName + "\ncommit SHA: " + commitSHA + "\ncommit message: " + commitMessage + "\ndate: " + date).toString();
     }
 }

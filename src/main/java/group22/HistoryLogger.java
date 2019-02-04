@@ -34,7 +34,7 @@ public class HistoryLogger {
         w.println("<p><strong><a href=\"/\">Back</a></strong></p>");
         w.println("<p><strong>SHA:</strong> " + p.commitSHA +  "</p>");
         w.println("<p><strong>Author:</strong> " + p.pusherName + "</p>");
-        w.println("<p><strong>Date:</strong> " + "date goes here" + "</p>");        // todo date
+        w.println("<p><strong>Date:</strong> " + p.date + "</p>"); 
         w.println("<p><strong>Status:</strong> " + p.buildResult + "</p>");
         w.println("<p><strong>Logs:</strong></p> ");
         w.println("<div style=\"border: 1px solid black; background:#ffffcc\"><pre>");
