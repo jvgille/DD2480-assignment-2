@@ -51,7 +51,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             String pusherMail = info.getJSONObject("author").getString("email");
             String pusherName = info.getJSONObject("author").getString("name");
             String commitSHA = info.getString("id");
-            String url = obj.getString("html_url");
+            String url = obj.getJSONObject("repository").getString("html_url");
             PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, url);
             queue.add(pp);
             System.out.println(pp);
