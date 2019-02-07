@@ -26,6 +26,11 @@ import java.util.stream.Collectors;
  * documentation for API documentation of those classes.
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
+    public static final String DATA_PATH = "data";
+    public static final String REPO_PATH = DATA_PATH + "/repo";
+    public static final String BUILDS_PATH = DATA_PATH + "/builds";
+    public static final String INDEX_PATH = DATA_PATH + "/index.html";
+
     private static ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
     private static volatile boolean shouldStop = false;
 
@@ -46,9 +51,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             String pusherMail = info.getJSONObject("author").getString("email");
             String pusherName = info.getJSONObject("author").getString("name");
             String commitSHA = info.getString("id");
-            String commitMessage = info.getString("message");
-            String date = info.getString("updated_at");
-            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, commitMessage, date);
+            String url = obj.getJSONObject("repository").getString("html_url");
+            String date = info.getString("timestamp");
+            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, url, date);
             queue.add(pp);
             System.out.println(pp);
         } else if (request.getMethod() == "GET") {
@@ -56,11 +61,11 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                 response.getOutputStream().println("Stopping server. Good bye.");
                 shouldStop = true;
             } else {
-                String path = "data/";
+                String path;
                 if (target.equals("/")) {
-                    path += "index.html";
+                    path = INDEX_PATH;
                 } else {
-                    path += "builds" + target;
+                    path = BUILDS_PATH + target;
                 }
                 ServletOutputStream s = response.getOutputStream();
                 try {
