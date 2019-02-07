@@ -51,17 +51,10 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             String pusherMail = info.getJSONObject("author").getString("email");
             String pusherName = info.getJSONObject("author").getString("name");
             String commitSHA = info.getString("id");
-<<<<<<< 4f058dc1c6116b6e336f4ff4b9b6a0579d3843b9
             String url = obj.getJSONObject("repository").getString("html_url");
-            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, url);
-=======
             String commitMessage = info.getString("message");
             String date = info.getString("updated_at");
-            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, commitMessage, date);
-<<<<<<< HEAD
->>>>>>> #18, added date, needs to be tested
-=======
->>>>>>> ee2b08cb57a44c9633ed9487e986ba15e446f8de
+            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, url, commitMessage, date);
             queue.add(pp);
             System.out.println(pp);
         } else if (request.getMethod() == "GET") {
