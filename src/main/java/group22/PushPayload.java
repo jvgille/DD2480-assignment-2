@@ -1,5 +1,7 @@
 package group22;
-
+/*
+* A utility class that stores important information about a commit. 
+*/
 public class PushPayload {
     final String ref;
     final String pusherName;
