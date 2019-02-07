@@ -21,11 +21,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import java.util.stream.Collectors;
 
-import java.util.*;
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.activation.*;
-
 /**
  * Skeleton of a ContinuousIntegrationServer which acts as webhook See the Jetty
  * documentation for API documentation of those classes.
@@ -84,7 +79,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         response.flushBuffer();
     }
 
-    private static void handleQueue() {
+    private static void handleQueue() throws Exception {
         try {
             while(!shouldStop) {
                 PushPayload p = queue.poll();
@@ -99,46 +94,16 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     System.out.println("storing build");
                     HistoryLogger.storeBuild(p);
                     System.out.println("done");
+                    ProcessBuilder b = new ProcessBuilder();
+                    b.command("bash", "-c", "mail -s \"Your latest push\" "+ p.pusherMail +" <<< '"+ p.buildResult + "'");
+                    b.start();
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        sendEmail(pp.pusherMail, "arturo.vignon@gmail.com", "localhost", "branch");
     }
 
-    private void sendEmail(String to, String from, String host, String branch) {
-      // Get system properties
-      Properties properties = System.getProperties();
-      // Setup mail server
-      properties.setProperty("mail.smtp.host", "130.229.164.248");
-      //properties.setProperty("mail.smtp.port", "8022");
-      // Get the default Session object.
-      Session session = Session.getDefaultInstance(properties);
-      try {
-         // Create a default MimeMessage object.
-         MimeMessage message = new MimeMessage(session);
-         // Set From: header field of the header.
-         message.setFrom(new InternetAddress(from));
-         // Set To: header field of the header.
-         message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-         // Set Subject: header field
-         message.setSubject("Your last commit");
-         // Send the actual HTML message, as big as you like
-         if (true) {
-                message.setContent("<h1>Hello, your last commit on the branch " + branch + " succeeded.</h1>", "text/html");
-         } else {
-             message.setContent("<h1>Hello, your last commit on the branch " + branch + " failed.</h1>", "text/html");
-         }
-
-         // Send message
-         Transport.send(message);
-         System.out.println("Sent message successfully....");
-      } catch (MessagingException mex) {
-         mex.printStackTrace();
-      }
-    }
     // used to start the CI server in command line
     public static void main(String[] args) throws Exception {
         Server server = new Server(8022);
