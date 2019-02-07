@@ -79,7 +79,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         response.flushBuffer();
     }
 
-    private static void handleQueue() {
+    private static void handleQueue() throws Exception {
         try {
             while(!shouldStop) {
                 PushPayload p = queue.poll();
@@ -94,6 +94,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
                     System.out.println("storing build");
                     HistoryLogger.storeBuild(p);
                     System.out.println("done");
+                    ProcessBuilder b = new ProcessBuilder();
+                    b.command("bash", "-c", "mail -s \"Your latest push\" "+ p.pusherMail +" <<< '"+ p.buildResult + "'");
+                    b.start();
                 }
             }
         } catch (Exception e) {
