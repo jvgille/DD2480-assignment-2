@@ -10,11 +10,6 @@ import java.lang.ProcessBuilder;
 import java.util.stream.Collectors;
 
 public class ProjectBuilder {
-    static class BuildOutput {
-        boolean success;
-        String message;
-    }
-
     /**
      * Utility method which builds a String from all the data in an InputStream.
      */
@@ -27,23 +22,19 @@ public class ProjectBuilder {
      * Builds the gradle project located in "data/DD2480-assignment-2"
      * and returns a BuildOutput object describing the result.
      */
-    public static BuildOutput build() throws IOException, InterruptedException {
-        BuildOutput result = new BuildOutput();
-
+    public static void build(PushPayload p) throws IOException, InterruptedException {
         Process pr = new ProcessBuilder("./gradlew", "check")
-            .directory(new File("data/DD2480-assignment-2"))
+            .directory(new File(ContinuousIntegrationServer.REPO_PATH))
             .start();
 
         pr.waitFor();
 
         if (pr.exitValue() != 0) {
-            result.success = false;
-            result.message = stringFromInputStream(pr.getErrorStream());
-            return result;
+            p.buildResult = "fail";
+            p.buildMessage = stringFromInputStream(pr.getErrorStream());
         }
 
-        result.success = true;
-        result.message = stringFromInputStream(pr.getInputStream());
-        return result;
+        p.buildResult = "success";
+        p.buildMessage = stringFromInputStream(pr.getInputStream());
     }
 }

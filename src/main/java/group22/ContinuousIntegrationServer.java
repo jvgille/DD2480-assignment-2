@@ -31,8 +31,13 @@ import javax.activation.*;
  * documentation for API documentation of those classes.
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
+    public static final String DATA_PATH = "data";
+    public static final String REPO_PATH = DATA_PATH + "/repo";
+    public static final String BUILDS_PATH = DATA_PATH + "/builds";
+    public static final String INDEX_PATH = DATA_PATH + "/index.html";
 
-    ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
+    private static ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
+    private static volatile boolean shouldStop = false;
 
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
@@ -42,14 +47,8 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         System.out.println(target);
 
-        PushPayload pp = new PushPayload();
-        // here you do all the continuous integration tasks
-        // for example
-        // 1st clone your repository
-        // 2nd compile the code (run ./gradlew build)
-        String requestData = request.getReader().lines().collect(Collectors.joining());
-        System.out.println(requestData);
         if (request.getMethod() == "POST") {
+            String requestData = request.getReader().lines().collect(Collectors.joining());
             JSONObject obj = new JSONObject(requestData);
             String ref = obj.getString("ref");
             JSONArray commits = obj.getJSONArray("commits");
@@ -57,26 +56,53 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             String pusherMail = info.getJSONObject("author").getString("email");
             String pusherName = info.getJSONObject("author").getString("name");
             String commitSHA = info.getString("id");
-            String commitMessage = info.getString("message");
-            pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, commitMessage);
+            String url = obj.getJSONObject("repository").getString("html_url");
+            String date = info.getString("timestamp");
+            PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, url, date);
             queue.add(pp);
             System.out.println(pp);
-        }
-
-        if (request.getMethod() == "GET") {
-            String path = "data/";
-            if (target.equals("/")) {
-                path += "index.html";
+        } else if (request.getMethod() == "GET") {
+            if (target.equals("/stop")) {
+                response.getOutputStream().println("Stopping server. Good bye.");
+                shouldStop = true;
             } else {
-                path += "builds" + target;
+                String path;
+                if (target.equals("/")) {
+                    path = INDEX_PATH;
+                } else {
+                    path = BUILDS_PATH + target;
+                }
+                ServletOutputStream s = response.getOutputStream();
+                try {
+                    byte[] b = Files.readAllBytes(Paths.get(path));
+                    s.write(b);
+                } catch(NoSuchFileException e) {
+                    s.println("404 file not found");
+                }
             }
-            ServletOutputStream s = response.getOutputStream();
-            try {
-                byte[] b = Files.readAllBytes(Paths.get(path));
-                s.write(b);
-            } catch(NoSuchFileException e) {
-                s.println("404 file not found");
+        }
+        response.flushBuffer();
+    }
+
+    private static void handleQueue() {
+        try {
+            while(!shouldStop) {
+                PushPayload p = queue.poll();
+
+                if (p == null) {
+                    Thread.sleep(1000);
+                } else {
+                    System.out.println("cloning repo");
+                    GitHandler.cloneRepo(p);
+                    System.out.println("executing build");
+                    ProjectBuilder.build(p);
+                    System.out.println("storing build");
+                    HistoryLogger.storeBuild(p);
+                    System.out.println("done");
+                }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         sendEmail(pp.pusherMail, "arturo.vignon@gmail.com", "localhost", "branch");
@@ -118,9 +144,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         Server server = new Server(8022);
         server.setHandler(new ContinuousIntegrationServer());
         server.start();
-        server.join();
 
-        // HistoryLogger.storeBuild("hello this is build result\nit is very nice");
+        handleQueue();
+        server.stop();
     }
 
 }

@@ -1,42 +1,29 @@
 package group22;
-
+/*
+* A utility class that stores important information about a commit.
+*/
 public class PushPayload {
-    String branch;
-    String pusherName;
-    String pusherMail;
-    String commitSHA;
-    String commitMessage;
+    final String ref;
+    final String pusherName;
+    final String pusherMail;
+    final String commitSHA;
+    final String repoURL;
 
-    public PushPayload() {
-        branch = "";
-        pusherName = "";
-        pusherMail = "";
-        commitSHA = "";
-        commitMessage = "";
-    }
+    String buildResult;
+    String buildMessage;
+    String date;
 
-    public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String commitMessage) {
-        this.branch = getBranchName(ref);
+    public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String repoURL, String date) {
+        this.ref = ref;
         this.pusherName = pusherName;
         this.pusherMail = pusherMail;
         this.commitSHA = commitSHA;
-        this.commitMessage = commitMessage;
-    }
-
-    private String getBranchName(String ref) {
-        char c;
-        StringBuilder sb = new StringBuilder();
-        int index = ref.length() - 1;
-        while ((c = ref.charAt(index)) != '/') {
-            sb.append(ref.charAt(index));
-            index -= 1;
-        }
-        return sb.reverse().toString();
+        this.repoURL = repoURL;
+        this.date = date;
     }
 
     @Override
     public String toString() {
-        StringBuilder b = new StringBuilder();
-        return b.append("branch: " + branch + "\npusher Mail: " + pusherMail + "\npusher Name: " + pusherName + "\ncommit SHA: " + commitSHA + "\ncommit message: " + commitMessage).toString();
+        return "ref: " + ref + "\nURL: " + "\nemail: " + pusherMail + "\nname: " + pusherName + "\nSHA: " + commitSHA + "\ndate: " + date;
     }
 }
