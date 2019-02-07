@@ -58,7 +58,10 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             String commitMessage = info.getString("message");
             String date = info.getString("updated_at");
             PushPayload pp = new PushPayload(ref, pusherName, pusherMail, commitSHA, commitMessage, date);
+<<<<<<< HEAD
 >>>>>>> #18, added date, needs to be tested
+=======
+>>>>>>> ee2b08cb57a44c9633ed9487e986ba15e446f8de
             queue.add(pp);
             System.out.println(pp);
         } else if (request.getMethod() == "GET") {

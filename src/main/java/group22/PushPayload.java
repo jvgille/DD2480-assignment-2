@@ -11,6 +11,7 @@ public class PushPayload {
     String buildMessage;
     String date;
 
+<<<<<<< HEAD
 <<<<<<< 4f058dc1c6116b6e336f4ff4b9b6a0579d3843b9
     public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String repoURL) {
         this.ref = ref;
@@ -19,6 +20,8 @@ public class PushPayload {
         this.commitSHA = commitSHA;
         this.repoURL = repoURL;
 =======
+=======
+>>>>>>> ee2b08cb57a44c9633ed9487e986ba15e446f8de
     public PushPayload(String ref, String pusherName, String pusherMail, String commitSHA, String commitMessage, String date) {
         this.branch = getBranchName(ref);
         this.pusherName = pusherName;
@@ -47,6 +50,9 @@ public class PushPayload {
 =======
         StringBuilder b = new StringBuilder();
         return b.append("branch: " + branch + "\npusher Mail: " + pusherMail + "\npusher Name: " + pusherName + "\ncommit SHA: " + commitSHA + "\ncommit message: " + commitMessage + "\ndate: " + date).toString();
+<<<<<<< HEAD
 >>>>>>> #18, added date, needs to be tested
+=======
+>>>>>>> ee2b08cb57a44c9633ed9487e986ba15e446f8de
     }
 }
