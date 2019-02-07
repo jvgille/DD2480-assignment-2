@@ -24,7 +24,7 @@ public class ProjectBuilder {
      */
     public static void build(PushPayload p) throws IOException, InterruptedException {
         Process pr = new ProcessBuilder("./gradlew", "check")
-            .directory(new File("data/repo"))
+            .directory(new File(ContinuousIntegrationServer.REPO_PATH))
             .start();
 
         pr.waitFor();

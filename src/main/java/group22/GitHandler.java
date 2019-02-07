@@ -11,9 +11,6 @@ import org.apache.commons.io.FileUtils;
 * so that the CI seriver can compile the code and test it.
 */
 public final class GitHandler{
-    private static String path = "data/repo";
-    private static String url = "https://github.com/jvgille/DD2480-assignment-2.git";
-
     /*
     * @param branch: the name of the branch that is to be cloned
     * cloneRepo will clone the repository (at a specific branch) and put it in a data-folder
@@ -21,12 +18,12 @@ public final class GitHandler{
     */
     public static void cloneRepo(PushPayload p) throws GitAPIException,IOException {
 
-        FileUtils.deleteDirectory(new File(path));
+        FileUtils.deleteDirectory(new File(ContinuousIntegrationServer.REPO_PATH));
         Git git = Git.cloneRepository()
-                .setURI(url)
-                .setDirectory(new File(path))
-                .setBranchesToClone(Arrays.asList("refs/heads/" + p.branch))
-                .setBranch(p.branch)
+                .setURI(p.repoURL)
+                .setDirectory(new File(ContinuousIntegrationServer.REPO_PATH))
+                .setBranchesToClone(Arrays.asList(p.ref))
+                .setBranch(p.ref)
                 .call();
       }
 
