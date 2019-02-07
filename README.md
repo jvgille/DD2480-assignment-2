@@ -15,4 +15,4 @@ Your contribution
 * Joel Gille Vikström
 Your contribution
 * Paul Roland Jacques Griesser
-Your contribution
+I've done the PushPayload class with Arthur, we also handle the http payload from github in the ContinuousIntegrationServer class. I've helped in the notification system.
