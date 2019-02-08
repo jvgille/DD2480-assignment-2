@@ -10,7 +10,7 @@ The code can be found in the __/src/main/java/group22__ folder.
 With Paul we implemented the handling of the http push payload from github in ContinuousIntegrationServer.java, we created the PushPayload class.
 We also contributed in the notification system by sending an email to the user.
 * Axel Larusson
-Your contribution
+I did the notification system and decided to do an e-mail that sends out the build result to a project member. I also attended all group meeting and helped with various issues.
 * Joel Ekelöf
 Your contribution
 * Joel Gille Vikström
