@@ -10,7 +10,6 @@ import java.lang.ProcessBuilder;
 import java.util.stream.Collectors;
 /**
 * A class for encapsulating the building and testing of the project
-*
 */
 public class ProjectBuilder {
     /**
