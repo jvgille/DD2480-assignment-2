@@ -42,7 +42,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         System.out.println(target);
 
-        if (request.getMethod() == "POST") {
+        if (request.getMethod() == "POST") { //If the server receives a webhook, we parse it and keep the information we need.
             String requestData = request.getReader().lines().collect(Collectors.joining());
             JSONObject obj = new JSONObject(requestData);
             String ref = obj.getString("ref");
@@ -78,7 +78,12 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
         response.flushBuffer();
     }
-
+    /**
+     * This method sleeps while nothing is pushed.
+     * When a PushPayload is pushed in the queue, it is pulled and built with the given information.
+     * An email is sent to the user to inform him about the result of the building of his latest commit.
+     * @throws Exception to show the error message if the building does not work.
+     */
     private static void handleQueue() throws Exception {
         try {
             while(!shouldStop) {
