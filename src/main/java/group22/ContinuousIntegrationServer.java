@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
  * documentation for API documentation of those classes.
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
-    public static final String DATA_PATH = "data";
-    public static final String REPO_PATH = DATA_PATH + "/repo";
-    public static final String BUILDS_PATH = DATA_PATH + "/builds";
-    public static final String INDEX_PATH = DATA_PATH + "/index.html";
+    public static String DATA_PATH = "data";
+    public static String REPO_PATH = DATA_PATH + "/repo";
+    public static String BUILDS_PATH = DATA_PATH + "/builds";
+    public static String INDEX_PATH = DATA_PATH + "/index.html";
 
     private static ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
     private static volatile boolean shouldStop = false;
