@@ -25,6 +25,7 @@ public final class GitHandler{
                 .setBranchesToClone(Arrays.asList(p.ref))
                 .setBranch(p.ref)
                 .call();
+        git.close();
       }
 
 }

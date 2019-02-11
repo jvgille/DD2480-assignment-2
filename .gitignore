@@ -12,3 +12,6 @@ data
 bin
 .classpath
 .project
+
+#vscode
+.vscode

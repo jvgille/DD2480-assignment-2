@@ -34,12 +34,12 @@ public class ProjectBuilder {
 
         pr.waitFor();
 
-        if (pr.exitValue() != 0) {
+        if (pr.exitValue() == 0) {
+            p.buildResult = "success";
+            p.buildMessage = stringFromInputStream(pr.getInputStream());
+        } else {
             p.buildResult = "fail";
             p.buildMessage = stringFromInputStream(pr.getErrorStream());
         }
-
-        p.buildResult = "success";
-        p.buildMessage = stringFromInputStream(pr.getInputStream());
     }
 }
