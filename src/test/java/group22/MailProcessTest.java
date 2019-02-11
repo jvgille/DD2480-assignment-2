@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
  * Class for testing the mail system
  */
 public class MailProcessTest {
+    
     /**
      * Test that our notification system works properly and that the subprocess doesn't return an error
      */
