@@ -5,6 +5,10 @@ The server will clone your project and build it. It will then email you the resu
 
 ### Structure
 The code can be found in the __/src/main/java/group22__ folder.
+The unit-tests for the server can be found in the __/src/test/java/group22__ folder.
+
+### Documentation
+By running `./gradlew javadoc` you can access the documentation in __/build/docs/javadoc/group22/index.html__
 
 ### Requierments
 - Your project need to use Gradle, since the CI-server uses it to build the project.
@@ -12,6 +16,12 @@ The code can be found in the __/src/main/java/group22__ folder.
 - You need to have the _sendmail_ package installed.
 - Your project needs to be _public_
 
+### Access the server.
+Go to http://__yourip__:8022 in your browser, where __yourip__ is the ip-address where the server is run in order to access the build history.
+
+You can also shut down the server remotely by going to http://__yourip__:8022/stop
+
+Note that if there are no past builds, the server will return a 404 error.
 ### How to use
 #### Step 1:
 Clone or download the repository.
@@ -22,8 +32,26 @@ The server will run on your localhost:8022, so in order to set up a webhook you 
 
 #### Step 3:
 Run the server via the command-line:
-    ./gradlew run
-This will start the webserver on your localhost. 
+    `./gradlew run`
+This will start the webserver on your localhost.
+
+### How to run the unit-tests
+Simply run `./gradlew test` to run the unit-tests.
+
+## Implementation
+#### P1,P2: Compilation
+Compilation and testing is done in the ProjectBuilder class and is tested in the BuildTest.java
+#### P3: Notification
+Notification is done in ContinuousIntegrationServer.java and uses a mail script from Unix.
+
+### P+ criteria
+We are going for P+, by doing criteria p6 and p8.
+
+#### P6
+Each build is given a URL which is the commit SHA, and all builds are saved in a local directory, so even if the server is rebooted the history will persist. As seen above you have one URL to list all of them (http://__yourip__:8022). The reason we have __yourip__ instead of an actual working address is because it depends on where the server is run.
+#### P8
+We have done all commits related to issues.
+
 ## Statement of contributions
 * Arthur Carl Vignon
 With Paul we implemented the handling of the http push payload from github in ContinuousIntegrationServer.java, we created the PushPayload class.
