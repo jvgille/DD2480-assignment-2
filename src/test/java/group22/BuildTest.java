@@ -7,7 +7,9 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
-
+/**
+ * Class for testing the compilation and execution of the tests of the project via the ProjectBuilder class
+ */
 public class BuildTest {
     PushPayload p;
 
