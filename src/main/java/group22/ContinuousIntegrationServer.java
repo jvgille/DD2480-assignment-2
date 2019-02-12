@@ -22,8 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 /**
- * Skeleton of a ContinuousIntegrationServer which acts as webhook See the Jetty
- * documentation for API documentation of those classes.
+ * Represent a CI server that handle webhooks from GitHub
  */
 public class ContinuousIntegrationServer extends AbstractHandler {
     public static final String DATA_PATH = "data";
@@ -34,6 +33,16 @@ public class ContinuousIntegrationServer extends AbstractHandler {
     private static ConcurrentLinkedQueue<PushPayload> queue = new ConcurrentLinkedQueue<PushPayload>();
     private static volatile boolean shouldStop = false;
 
+    /**
+     * handle a POST request by getting its payload,
+     * the handling of this POST is then transfered to the handleQueue method
+     * handle a GET request by either stopping the server or by displaying the different build of our project
+     *
+     * @param target The target of the request - either a URI or a name.
+     * @param baseRequest The original unwrapped request object.
+     * @param request The request either as the Request object or a wrapper of that request.
+     * @param response The response as the Response object or a wrapper of that request.
+     */
     public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
             throws IOException, ServletException {
         response.setContentType("text/html;charset=utf-8");
@@ -42,7 +51,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
 
         System.out.println(target);
 
-        if (request.getMethod() == "POST") {
+        if (request.getMethod() == "POST") { //If the server receives a webhook, we parse it and keep the information we need.
             String requestData = request.getReader().lines().collect(Collectors.joining());
             JSONObject obj = new JSONObject(requestData);
             String ref = obj.getString("ref");
@@ -57,6 +66,7 @@ public class ContinuousIntegrationServer extends AbstractHandler {
             queue.add(pp);
             System.out.println(pp);
         } else if (request.getMethod() == "GET") {
+            System.out.println("get");
             if (target.equals("/stop")) {
                 response.getOutputStream().println("Stopping server. Good bye.");
                 shouldStop = true;
@@ -78,7 +88,12 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
         response.flushBuffer();
     }
-
+    /**
+     * This method sleeps while nothing is pushed.
+     * When a PushPayload is pushed in the queue, it is pulled and built with the given information.
+     * An email is sent to the user to inform him about the result of the building of his latest commit.
+     * @throws Exception to show the error message if the building does not work.
+     */
     private static void handleQueue() throws Exception {
         try {
             while(!shouldStop) {
@@ -104,7 +119,9 @@ public class ContinuousIntegrationServer extends AbstractHandler {
         }
     }
 
-    // used to start the CI server in command line
+    /**
+     * Start the CI server and set its handler to be our ContinuousIntegrationServer implementation
+     */
     public static void main(String[] args) throws Exception {
         Server server = new Server(8022);
         server.setHandler(new ContinuousIntegrationServer());
