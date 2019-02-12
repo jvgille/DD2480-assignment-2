@@ -5,6 +5,7 @@ The server will clone your project and build it. It will then email you the resu
 
 ### Structure
 The code can be found in the __/src/main/java/group22__ folder.
+The unit-tests for the server can be found in the __/src/test/java/group22__ folder.
 
 ### Documentation
 By running `./gradlew javadoc` you can access the documentation in __/build/docs/javadoc/group22/index.html__
@@ -33,6 +34,10 @@ The server will run on your localhost:8022, so in order to set up a webhook you 
 Run the server via the command-line:
     `./gradlew run`
 This will start the webserver on your localhost.
+
+### How to run the unit-tests
+Simply run `./gradlew test` to run the unit-tests.
+
 ## P+ criteria
 We are going for P+, by doing criteria p6 and p8.
 
