@@ -38,13 +38,20 @@ This will start the webserver on your localhost.
 ### How to run the unit-tests
 Simply run `./gradlew test` to run the unit-tests.
 
-## P+ criteria
+## Implementation
+#### P1,P2: Compilation
+Compilation and testing is done in the ProjectBuilder class and is tested in the BuildTest.java
+#### P3: Notification
+Notification is done in ContinuousIntegrationServer.java and uses a mail script from Unix.
+
+### P+ criteria
 We are going for P+, by doing criteria p6 and p8.
 
 #### P6
 Each build is given a URL which is the commit SHA, and all builds are saved in a local directory, so even if the server is rebooted the history will persist. As seen above you have one URL to list all of them (http://__yourip__:8022). The reason we have __yourip__ instead of an actual working address is because it depends on where the server is run.
 #### P8
 We have done all commits related to issues.
+
 ## Statement of contributions
 * Arthur Carl Vignon
 With Paul we implemented the handling of the http push payload from github in ContinuousIntegrationServer.java, we created the PushPayload class.
