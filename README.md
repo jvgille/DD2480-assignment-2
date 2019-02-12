@@ -42,7 +42,7 @@ Simply run `./gradlew test` to run the unit-tests.
 #### P1,P2: Compilation
 Compilation and testing is done in the ProjectBuilder class and is tested in the BuildTest.java
 #### P3: Notification
-Notification is done in ContinuousIntegrationServer.java and uses a mail script from Unix.
+Notification is done in ContinuousIntegrationServer.java and uses a mail script from Unix. It is tested in MailProcessTest.java
 
 ### P+ criteria
 We are going for P+, by doing criteria p6 and p8.
